@@ -11,12 +11,12 @@ app = Flask(__name__)
 CORS(app)
 
 # ===== DB CONFIG =====
-app.config["MYSQL_HOST"] = os.environ.get("MYSQLHOST")
-app.config["MYSQL_USER"] = os.environ.get("MYSQLUSER")
-app.config["MYSQL_PASSWORD"] = os.environ.get("MYSQLPASSWORD")
-app.config["MYSQL_DB"] = os.environ.get("MYSQLDATABASE")
+# ===== DB CONFIG (SAFE VERSION) =====
+app.config["MYSQL_HOST"] = os.environ.get("MYSQLHOST") or "mysql.railway.internal"
+app.config["MYSQL_USER"] = os.environ.get("MYSQLUSER") or "root"
+app.config["MYSQL_PASSWORD"] = os.environ.get("MYSQLPASSWORD") or "hZzupSQAtPLVtbqgDrXpOkkHfwLcbiQt"
+app.config["MYSQL_DB"] = os.environ.get("MYSQLDATABASE") or "railway"
 app.config["MYSQL_PORT"] = int(os.environ.get("MYSQLPORT", 3306))
-
 mysql = MySQL(app)
 
 # ===== UPLOAD FOLDER =====
