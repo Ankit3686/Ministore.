@@ -89,21 +89,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         let imgEl = document.getElementById("profileImage");
 
-                        // Cloudinary OR old response handle
-                        if (data.image.startsWith("http")) {
-                            imgEl.src = data.image;
-                        } else {
-                            imgEl.src = BASE_URL + data.image;
-                        }
+                        // Cloudinary URL
+                        imgEl.src = data.image + "?t=" + new Date().getTime();
 
-                        // Cache busting (optional)
-                        imgEl.src += "?t=" + new Date().getTime();
+                    } else {
+                        alert("Upload failed ❌");
                     }
+                })
+                .catch(err => {
+                    console.error("Upload error:", err);
+                    alert("Server error ❌");
                 });
 
         });
     }
-
     // ===== ADMIN LINK =====
     const adminEmail = "kumar22102001ankit@gmail.com";
     const currentEmail = localStorage.getItem("loggedInEmail");
