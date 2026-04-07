@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!user) return;
 
-            // ===== USERNAME LETTER (FIXED) =====
+            // ===== USERNAME LETTER =====
             let usernameEl = document.getElementById("username");
 
             if (usernameEl) {
@@ -44,19 +44,29 @@ document.addEventListener("DOMContentLoaded", function () {
                         : "User";
             }
 
-             const profileImg = document.getElementById("profileImage");
+            // ===== PROFILE IMAGE (FIXED 🔥) =====
+            const profileImg = document.getElementById("profileImage");
 
             if (user.image) {
-                profileImg.src = BASE_URL + user.image;
+                // Cloudinary OR old data handle
+                if (user.image.startsWith("http")) {
+                    profileImg.src = user.image;
+                } else {
+                    profileImg.src = BASE_URL + user.image;
+                }
             } else {
                 profileImg.src = "https://ankit3686.github.io/ministore/static/images/default-profile.jpg";
             }
 
+            // Fallback if image broken
+            profileImg.onerror = function () {
+                this.src = "https://ankit3686.github.io/ministore/static/images/default-profile.jpg";
+            };
 
         })
+        .catch(err => console.error("Profile error:", err));
 
-    
-      // ===== IMAGE UPLOAD =====
+    // ===== IMAGE UPLOAD =====
     let uploadInput = document.getElementById("imageUpload");
 
     if (uploadInput) {
@@ -76,8 +86,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        document.getElementById("profileImage").src =
-                            BASE_URL + data.image;
+
+                        let imgEl = document.getElementById("profileImage");
+
+                        // Cloudinary OR old response handle
+                        if (data.image.startsWith("http")) {
+                            imgEl.src = data.image;
+                        } else {
+                            imgEl.src = BASE_URL + data.image;
+                        }
+
+                        // Cache busting (optional)
+                        imgEl.src += "?t=" + new Date().getTime();
                     }
                 });
 
@@ -95,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
             : "none";
     }
 
-    // ===== MOBILE DROPDOWN (SAFE) =====
+    // ===== MOBILE DROPDOWN =====
     const dropdown = document.querySelector(".dropdown");
 
     if (dropdown) {
