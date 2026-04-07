@@ -234,7 +234,6 @@ def get_user(user_id):
         )
     return jsonify({"success": False}), 404
 
-
 # ===== Upload profile picture and update user record =====
 @app.route("/upload-profile", methods=["POST"])
 def upload_profile():
@@ -244,22 +243,24 @@ def upload_profile():
     if not file:
         return jsonify({"success": False, "message": "No file"})
 
-    filename = secure_filename(file.filename)
+    import time
+
+    filename = str(int(time.time())) + "_" + secure_filename(file.filename)
+
     path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
-    # Save file
     file.save(path)
 
-    # Relative URL for DB / frontend
-    image_url = f"/static/uploads/{filename}"
+    BASE_URL = "https://ministore-production-ff58.up.railway.app"
+    image_url = f"{BASE_URL}/static/uploads/{filename}"
 
-    # Update user in DB
     cur = mysql.connection.cursor()
     cur.execute("UPDATE users SET image=%s WHERE id=%s", (image_url, user_id))
     mysql.connection.commit()
     cur.close()
 
     return jsonify({"success": True, "image": image_url})
+
 
 
 # ===== RESET PASSWORD =====
