@@ -6,6 +6,8 @@ import bcrypt
 import os
 from werkzeug.utils import secure_filename
 import json
+import cloudinary
+import cloudinary.uploader
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +23,11 @@ app.config["MYSQL_DB"] = os.environ.get("MYSQLDATABASE") or "railway"
 app.config["MYSQL_PORT"] = int(os.environ.get("MYSQLPORT", 3306))
 
 app.config["UPLOAD_FOLDER"] = "static/uploads"
+
+cloudinary.config(
+    cloud_name="dt01qemo1", api_key="647523698858745", api_secret="**********"
+)
+
 
 mysql = MySQL(app)
 
@@ -234,7 +241,7 @@ def get_user(user_id):
         )
     return jsonify({"success": False}), 404
 
-# ===== Upload profile picture and update user record =====
+# ===== UPLOAD PROFILE IMAGE =====
 @app.route("/upload-profile", methods=["POST"])
 def upload_profile():
     file = request.files.get("image")
@@ -243,17 +250,12 @@ def upload_profile():
     if not file:
         return jsonify({"success": False, "message": "No file"})
 
-    import time
+    # Upload to Cloudinary
+    result = cloudinary.uploader.upload(file)
 
-    filename = str(int(time.time())) + "_" + secure_filename(file.filename)
+    image_url = result.get("secure_url")
 
-    path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-
-    file.save(path)
-
-    BASE_URL = "https://ministore-production-ff58.up.railway.app"
-    image_url = f"{BASE_URL}/static/uploads/{filename}"
-
+    # Save in DB
     cur = mysql.connection.cursor()
     cur.execute("UPDATE users SET image=%s WHERE id=%s", (image_url, user_id))
     mysql.connection.commit()
