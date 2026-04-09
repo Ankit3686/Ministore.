@@ -91,7 +91,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         imgEl.src = data.image + "?t=" + new Date().getTime();
 
                     } else {
-                        alert("Upload failed ❌");
+                      alert("Upload failed ❌: " + data.message);
+                        console.log("FULL RESPONSE:", data);
                     }
                 })
                 .catch(err => {
