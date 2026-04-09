@@ -47,20 +47,18 @@ document.addEventListener("DOMContentLoaded", function () {
             // ===== PROFILE IMAGE (FIXED 🔥) =====
             const profileImg = document.getElementById("profileImage");
 
+            const DEFAULT_IMAGE = "https://res.cloudinary.com/your-cloud/image/upload/v123/default-profile.png";
+
             if (user.image) {
-                if (user.image.startsWith("http")) {
-                    profileImg.src = user.image;
-                } else {
-                    profileImg.src = `${BASE_URL}${user.image}`;
-                }
+                profileImg.src = user.image;
             } else {
-                profileImg.src = `${BASE_URL}/static/images/default-profile.jpg`;
+                profileImg.src = DEFAULT_IMAGE;
             }
 
             // fallback
             profileImg.onerror = function () {
                 this.onerror = null;
-                this.src = `${BASE_URL}/static/images/default-profile.jpg`;
+                this.src = DEFAULT_IMAGE;
             };
 
         })
@@ -89,11 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         let imgEl = document.getElementById("profileImage");
 
-                        if (data.image.startsWith("http")) {
-                            imgEl.src = data.image + "?t=" + new Date().getTime();
-                        } else {
-                            imgEl.src = BASE_URL + data.image + "?t=" + new Date().getTime();
-                        }
+                        // cache busting (important 🔥)
+                        imgEl.src = data.image + "?t=" + new Date().getTime();
 
                     } else {
                         alert("Upload failed ❌");
