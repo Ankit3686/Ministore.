@@ -22,10 +22,10 @@ app.config["MYSQL_PASSWORD"] = (
 app.config["MYSQL_DB"] = os.environ.get("MYSQLDATABASE") or "railway"
 app.config["MYSQL_PORT"] = int(os.environ.get("MYSQLPORT", 3306))
 
-app.config["UPLOAD_FOLDER"] = "static/uploads"
-
 cloudinary.config(
-    cloud_name="dt01qemo1", api_key="647523698858745", api_secret="**********"
+    cloud_name=os.getenv("CLOUD_NAME") or "dt01qemo1",
+    api_key=os.getenv("API_KEY") or "647523698858745",
+    api_secret=os.getenv("API_SECRET") or "i1UoEUfejse-Kf8ezvgBdVgQDxY",
 )
 
 
